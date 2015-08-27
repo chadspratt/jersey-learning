@@ -1,0 +1,24 @@
+table {
+    width: 200px;
+    border-collapse: collapse;
+}
+table td{
+    border: 1px solid black;
+    width: 100px;
+}
+table td .label {
+    width: 85%;
+    display: inline-block;
+    height: 14px;
+}
+table td input {
+    display: none;
+    border: 1px solid blue;
+}
+table td img {
+    position: relative;
+    display: none;
+    height: 10px;
+    width: 10px;
+    float: right;
+}
