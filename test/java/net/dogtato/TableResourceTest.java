@@ -39,14 +39,13 @@ public class TableResourceTest {
     }
 
     /**
-     * Test to see that the message "Got it!" is sent in the response.
+     * Test to see that a cell value can be set and then retrieved.
      */
     @Test
     public void testGetCellValue() {
-        String newValue = RandomStringUtils.randomAlphanumeric(10);
-        target.path("cell/A1/" + newValue).request();
+        String randomValue = RandomStringUtils.randomAlphanumeric(10);
+        target.path("cell/A1/" + randomValue).request().buildPost(null).invoke();
         String responseMsg = target.path("cell/A1").request().get(String.class);
-        // assertEquals("{\"val\":\"" + newValue + "\"}", responseMsg);
-        assertEquals("{\"val\":\"\"}", responseMsg);
+        assertEquals("{\"val\":\"" + randomValue + "\"}", responseMsg);
     }
 }
