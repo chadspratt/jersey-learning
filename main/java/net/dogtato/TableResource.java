@@ -27,13 +27,12 @@ public class TableResource {
             .add("val", cellValues.get(cellAddress))
             .build();
         return cellValueJSON.toString();
-        // return "{'Got': 'it!'}";
     }
 
     @POST
     @Path("{newValue}")
     public void setCellValue(@PathParam("address") String cellAddress,
-                                         @PathParam("newValue") String newValue) {
+                             @PathParam("newValue") String newValue) {
         cellValues.put(cellAddress, newValue);
     }
 }

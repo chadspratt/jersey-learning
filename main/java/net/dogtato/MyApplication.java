@@ -12,5 +12,6 @@ public class MyApplication extends ResourceConfig {
         packages(TableResource.class.getPackage().getName());
 
         register(LoggingFilter.class);
+        register(CORSResponseFilter.class);
     }
 }

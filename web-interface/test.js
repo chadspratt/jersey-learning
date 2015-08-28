@@ -1,7 +1,8 @@
 /*global $ */
-// var serviceURL = "http://www.clockduster.com:8080/";
-// var serviceURL = "127.0.0.1:8080/myapp/";
-var serviceURL = "localhost:8080/myapp/";
+// var serviceURL = 'http://www.clockduster.com:8080/';
+var serviceURL = 'http://localhost:8080/myapp/',
+    // used to prevent updating active cells
+    activeCell = '';
 
 function truncateValue (value, valueLength) {
     if (valueLength == undefined) {
@@ -12,71 +13,65 @@ function truncateValue (value, valueLength) {
     }
     return value;
 }
+function updateCell(address) {
+    'use strict';
+    if (address !== activeCell) {
+        $.get(serviceURL + 'cell/' + address ,
+            function loadCell (data) {
+                $('#' + address + ' .label').html(truncateValue(data.val));
+                $('#' + address + ' input').val(data.val);
+            },
+            'json');
+    }
+}
 function updateCells () {
     'use strict';
-    $.get(serviceURL + "cell/A1" ,
-        function loadCell (data) {
-            $('#A1 .label').html(truncateValue(data.val));
-            $('#A1 input').val(data.val);
-        },
-        'json');
-    $.get(serviceURL + "cell/A2" ,
-        function loadCell (data) {
-            $('#A2 .label').html(truncateValue(data.val));
-            $('#A2 input').val(data.val);
-        },
-        'json');
-    $.get(serviceURL + "cell/B1" ,
-        function loadCell (data) {
-            $('#B1 .label').html(truncateValue(data.val));
-            $('#B1 input').val(data.val);
-        },
-        'json');
-    $.get(serviceURL + "cell/B2" ,
-        function loadCell (data) {
-            $('#B2 .label').html(truncateValue(data.val));
-            $('#B2 input').val(data.val);
-        },
-        'json');
+    updateCell('A1');
+    updateCell('A2');
+    updateCell('B1');
+    updateCell('B2');
     setTimeout(updateCells, 2000);
 }
 
 
 $(document).ready(function initialSetup() {
-        updateCells();
+    updateCells();
 
-        $('img').on('click', function editCell () {
-            var cell = $(this).parent(),
-                  currentVal = cell.html(),
-                  cellKey = cell.attr('id');
+    $('img').on('click', function editCell () {
+        var cell = $(this).parent(),
+              currentVal = cell.html(),
+              cellKey = cell.attr('id');
 
-            // hide all inputs
-            $('input').hide();
-            $(this).hide();
-            $('.label').show();
-            cell.find('.label').hide();
-            cell.find('input').show();
+        activeCell = cellKey;
 
-            cell.find('input').on('keypress', function updateCell(e) {
-                if (e.which == 13) {
-                    var newValue = cell.find('input').val();
-                    $.post(serviceURL + 'cell/' + cellKey + '/' + newValue,
-                        function finishEditingCell() {
-                            cell.find('.label').html(newValue);
-                            cell.find('input').val(newValue);
-                            cell.find('.label').show();
-                            cell.find('input').hide();
-                        });
-                }
-            });
+        // hide all inputs
+        $('input').hide();
+        $(this).hide();
+        $('.label').show();
+        cell.find('.label').hide();
+        cell.find('input').show();
+
+        cell.find('input').on('keypress', function updateCell(e) {
+            if (e.which == 13) {
+                var newValue = cell.find('input').val();
+                $.post(serviceURL + 'cell/' + cellKey + '/' + newValue,
+                    function finishEditingCell() {
+                        cell.find('.label').html(newValue);
+                        cell.find('input').val(newValue);
+                        cell.find('.label').show();
+                        cell.find('input').hide();
+                        activeCell = '';
+                    });
+            }
         });
+    });
 
-        $('.label').on('mouseenter', function showEditIcon () {
-            $(this).html(truncateValue($(this).nextAll('input').val(), 8));
-            $(this).nextAll('img').show();
-        })
-        $('td').on('mouseleave', function showEditIcon () {
-            $(this).find('.label').html(truncateValue($(this).find('input').val()));
-            $(this).find('img').hide();
-        })
+    $('.label').on('mouseenter', function showEditIcon () {
+        $(this).html(truncateValue($(this).nextAll('input').val(), 8));
+        $(this).nextAll('img').show();
+    })
+    $('td').on('mouseleave', function showEditIcon () {
+        $(this).find('.label').html(truncateValue($(this).find('input').val()));
+        $(this).find('img').hide();
+    })
 });

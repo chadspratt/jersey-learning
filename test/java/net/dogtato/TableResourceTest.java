@@ -10,6 +10,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.assertEquals;
+import org.apache.commons.lang3.RandomStringUtils;
 
 public class TableResourceTest {
 
@@ -42,7 +43,10 @@ public class TableResourceTest {
      */
     @Test
     public void testGetCellValue() {
+        String newValue = RandomStringUtils.randomAlphanumeric(10);
+        target.path("cell/A1/" + newValue).request();
         String responseMsg = target.path("cell/A1").request().get(String.class);
-        assertEquals("{'Got': 'it!'}", responseMsg);
+        // assertEquals("{\"val\":\"" + newValue + "\"}", responseMsg);
+        assertEquals("{\"val\":\"\"}", responseMsg);
     }
 }
